@@ -120,6 +120,33 @@
             }
         });
         
+        // 결과 코드에 따른 메시지 매핑
+        const statusMessages = {
+            '01': '입력하신 사업자등록정보가 확인되었습니다.',
+            '02': '입력하신 사업자등록정보를 확인할 수 없습니다.',
+            '03': '폐업자 입니다.',
+            '04': '간이과세자 입니다.',
+            '05': '휴업자 입니다.',
+            // 추가 코드에 대한 메시지가 있으면 여기에 추가
+        };
+        
+        // 과세유형 코드에 따른 메시지 매핑
+        const taxTypeMessages = {
+            '01': '부가가치세 일반과세자',
+            '02': '부가가치세 간이과세자',
+            '03': '부가가치세 면세사업자',
+            '04': '수익사업을 영위하지 않는 비영리법인이거나 고유번호가 부여된 단체',
+            // 추가 코드에 대한 메시지가 있으면 여기에 추가
+        };
+        
+        // 사업자 상태 코드에 따른 메시지 매핑
+        const businessStatusMessages = {
+            '01': '계속사업자',
+            '02': '휴업자',
+            '03': '폐업자',
+            // 추가 코드에 대한 메시지가 있으면 여기에 추가
+        };
+        
         // 진위확인 폼 제출
         document.getElementById('verifyForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -143,21 +170,26 @@
                     const result = data.data[0];
                     let status = '';
                     let alert = '';
+                    let message = '';
                     
                     if (result.valid === '01') {
                         status = '검증 성공';
                         alert = 'alert-success';
+                        message = statusMessages[result.valid] || '사업자등록정보가 확인되었습니다.';
                     } else {
                         status = '검증 실패';
                         alert = 'alert-danger';
+                        message = statusMessages[result.valid] || result.valid_msg || '사업자등록정보를 확인할 수 없습니다.';
                     }
+                    
+                    // 형식화된 사업자등록번호 (XXX-XX-XXXXX 형식)
+                    const formattedBNo = result.b_no.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
                     
                     resultDiv.innerHTML = `
                         <div class="alert ${alert}">
                             <h5>검증 결과: ${status}</h5>
-                            <p>사업자등록번호: ${result.b_no}</p>
-                            <p>결과코드: ${result.valid}</p>
-                            <p>결과메시지: ${result.valid_msg || '메시지 없음'}</p>
+                            <p>사업자등록번호: ${formattedBNo}</p>
+                            <p>확인 결과: ${message}</p>
                         </div>
                     `;
                 } else {
@@ -206,12 +238,25 @@
                     `;
                     
                     data.data.forEach(item => {
+                        // 형식화된 사업자등록번호
+                        const formattedBNo = item.b_no.replace(/(\d{3})(\d{2})(\d{5})/, '$1-$2-$3');
+                        
+                        // 코드를 텍스트로 변환
+                        const taxTypeText = taxTypeMessages[item.tax_type] || item.tax_type || '정보 없음';
+                        const businessStatusText = businessStatusMessages[item.b_stt] || item.b_stt || '정보 없음';
+                        
+                        // 폐업일자 형식화 (YYYYMMDD -> YYYY-MM-DD)
+                        let formattedEndDate = '정보 없음';
+                        if (item.end_dt) {
+                            formattedEndDate = item.end_dt.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+                        }
+                        
                         resultHtml += `
                             <tr>
-                                <td>${item.b_no}</td>
-                                <td>${item.tax_type || '정보 없음'}</td>
-                                <td>${item.b_stt || '정보 없음'}</td>
-                                <td>${item.end_dt || '정보 없음'}</td>
+                                <td>${formattedBNo}</td>
+                                <td>${businessStatusText}</td>
+                                <td>${taxTypeText}</td>
+                                <td>${formattedEndDate}</td>
                             </tr>
                         `;
                     });
