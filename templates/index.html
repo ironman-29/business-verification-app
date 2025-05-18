@@ -8,9 +8,13 @@
     <style>
         body {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .container {
             max-width: 800px;
+            flex: 1;
         }
         .tab-content {
             padding: 20px;
@@ -24,6 +28,15 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             background-color: #f8f9fa;
+        }
+        .footer {
+            margin-top: 30px;
+            padding: 15px 0;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #6c757d;
         }
     </style>
 </head>
@@ -103,6 +116,14 @@
                     <button type="submit" class="btn btn-success">상태조회</button>
                 </form>
                 <div id="statusResult" class="result-container mt-4" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- 제작자 정보 -->
+        <div class="footer mt-5">
+            <div class="container">
+                <p class="mb-1">© 2025 사업자 정보 조회 시스템</p>
+                <p class="mb-0">제작: 철인29호 | 문의: <a href="mailto:sqqq98@naver.com">sqqq98@naver.com</a></p>
             </div>
         </div>
     </div>
